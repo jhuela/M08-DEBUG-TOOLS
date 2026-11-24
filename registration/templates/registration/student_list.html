@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,15 +14,14 @@
 </form>
 {% endif %}
 
-
     <h1>Registered Students</h1>
 
     <a href="{% url 'student_create' %}">
         Register Student
     </a>
 
-     <a href="{% url 'student_dashboard' %}">
-                    Student Dashboard
+    <a href="{% url 'student_dashboard' %}">
+        Student Dashboard
     </a>
 
     <table border="1">
@@ -47,11 +47,11 @@
                     Edit
                 </a>
 
-                <a href="{% url 'student_delete' student.id %}">
-                    Delete
-                </a>
-
-               
+                {% if perms.registration.delete_student %}
+                    <a href="{% url 'student_delete' student.id %}">
+                        Delete
+                    </a>
+                {% endif %}
 
             </td>
         </tr>

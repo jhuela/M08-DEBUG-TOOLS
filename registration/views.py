@@ -1,9 +1,15 @@
+
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import StudentForm
-from .models import Student
+from django.contrib.auth.decorators import login_required, permission_required
+from django.forms import forms
 from django.db.models import Count
 
+from .forms import StudentForm
+from .models import Student
 
+
+@login_required
+@permission_required('registration.view_student', raise_exception=True)
 def student_list(request):
     students = Student.objects.all()
     return render(
@@ -13,6 +19,8 @@ def student_list(request):
     )
 
 
+@login_required
+@permission_required('registration.add_student', raise_exception=True)
 def student_create(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -20,7 +28,6 @@ def student_create(request):
         if form.is_valid():
             form.save()
             return redirect('student_list')
-
     else:
         form = StudentForm()
 
@@ -31,19 +38,17 @@ def student_create(request):
     )
 
 
+@login_required
+@permission_required('registration.change_student', raise_exception=True)
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
     if request.method == 'POST':
-        form = StudentForm(
-            request.POST,
-            instance=student
-        )
+        form = StudentForm(request.POST, instance=student)
 
         if form.is_valid():
             form.save()
             return redirect('student_list')
-
     else:
         form = StudentForm(instance=student)
 
@@ -57,6 +62,8 @@ def student_update(request, pk):
     )
 
 
+@login_required
+@permission_required('registration.delete_student', raise_exception=True)
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
@@ -70,8 +77,10 @@ def student_delete(request, pk):
         {'student': student}
     )
 
-def student_dashboard(request):
 
+@login_required
+@permission_required('registration.view_student', raise_exception=True)
+def student_dashboard(request):
     students = Student.objects.all()
 
     total_students = students.count()
@@ -99,4 +108,3 @@ def student_dashboard(request):
             'year_summary': year_summary,
         }
     )
-
